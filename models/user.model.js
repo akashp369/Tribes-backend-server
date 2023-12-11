@@ -33,6 +33,10 @@ const UserSchema = mongoose.Schema(
       type: ObjectId,
       ref: "User_Cart",
     },
+    wishlist:{
+      type:ObjectId,
+      ref: "User_Wishlist",
+    },
     shippingAddress: [
       {
         address: {

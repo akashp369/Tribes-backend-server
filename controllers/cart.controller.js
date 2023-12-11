@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User_Cart = mongoose.model("User_Cart");
+const User_WishlistDB = require('../models/wishlist.Model')
 const Product = mongoose.model("Product");
 const {
   errorRes,
@@ -97,3 +98,51 @@ module.exports.editProductInCart_post = async (req, res) => {
     internalServerError(res, err);
   }
 };
+
+module.exports.getwishlistByUser = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    let userWishlist = await User_WishlistDB.findOne({ user: _id });
+    if (!userWishlist) {
+      userWishlist = new User_WishlistDB({ user: _id, products: [] });
+      await userWishlist.save();
+    }
+    await userWishlist.populate({
+      path: "products",
+      select:
+        "_id displayName brand_title color price product_category displayImage availability",
+    })
+
+    successRes(res, { wishlist: userWishlist });
+  } catch (error) {
+    internalServerError(res, error.message);
+  }
+};
+
+
+module.exports.addtoWishlist = async(req, res)=>{
+  try {
+    const {_id} = req.user;
+    const {productId, type} = req.params
+    if(!productId) return errorRes(res, 400, "Product id is not found.")
+    if(type != "add" && type != "delete"){
+      return errorRes(res, 400, "Request type can be - 'add' or 'delete'")
+    }
+    let wishlist = await User_WishlistDB.findOne({user: _id})
+    if (!wishlist) {
+      wishlist = new User_WishlistDB({ user: _id, products: [] });
+    }
+    const findProductIndex = wishlist.products.indexOf(productId);
+    if (type === "delete" && findProductIndex !== -1) {
+      wishlist.products.splice(findProductIndex, 1);
+    } else if (type === "add" && findProductIndex === -1) {
+      wishlist.products.push(productId);
+    }
+    await wishlist.save();
+
+    successRes(res, { wishlist });
+    
+  } catch (error) {
+    internalServerError(res, error.message)
+  }
+}

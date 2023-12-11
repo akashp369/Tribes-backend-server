@@ -9,5 +9,11 @@ router.post(
   requireUserLogin,
   cart_controller.editProductInCart_post
 );
+router.get('/user/wishlist', requireUserLogin, cart_controller.getwishlistByUser)
+router.post(
+  '/user/wishlist/:productId/:type',
+  requireUserLogin,
+  cart_controller.addtoWishlist
+  )
 
 module.exports = router;
