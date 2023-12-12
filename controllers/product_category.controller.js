@@ -95,3 +95,16 @@ module.exports.editCategory = async (req, res) => {
     internalServerError(res, "Error in editing product category");
   }
 }
+
+module.exports.getSingleCategory_get = async(req, res)=>{
+  try {
+    const {id} = req.params;
+    const find = await ProductCategory.findById(id)
+    if(!find){
+      return errorRes(res, 404, "Category is Not Found.")
+    }
+    successRes(res, find)
+  } catch (error) {
+    internalServerError(res, error.message)
+  }
+}

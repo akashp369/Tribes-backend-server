@@ -19,4 +19,6 @@ router.delete(
   categoryController.deleteProductCategory_delete
 );
 router.put("/product/category/:categoryId/edit", categoryController.editCategory);
+router.get('/product/category/single/:id', categoryController.getSingleCategory_get)
+
 module.exports = router;
