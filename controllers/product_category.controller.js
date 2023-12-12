@@ -84,12 +84,13 @@ module.exports.editCategory = async (req, res) => {
 
       changes.subCategory = subCategory.split(',');
     }
-    if (req.files) {
-      deleteFromCloudinary(product_C.displayImage.url)
+    if (req.files.image) {
+      // deleteFromCloudinary(product_C.displayImage.url)
+      console.log(req.files)
       const imageurl1 = await uploadOnCloudinary(req.files.image[0]);
       changes.displayImage = { url: imageurl1 };
     }
-    const updatedData = await ProductCategory.findByIdAndUpdate({ _id: categoryId }, updatedData, { new: true });
+    const updatedData = await ProductCategory.findByIdAndUpdate({ _id: categoryId }, changes, { new: true });
     successRes(res, updatedData);
   } catch (error) {
     internalServerError(res, "Error in editing product category");

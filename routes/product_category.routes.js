@@ -18,7 +18,9 @@ router.delete(
   requireAdminLogin,
   categoryController.deleteProductCategory_delete
 );
-router.put("/product/category/:categoryId/edit", categoryController.editCategory);
+router.put("/product/category/:categoryId/edit",
+upload.fields([{ name: "image", maxCount: 1 }]),
+categoryController.editCategory);
 router.get('/product/category/single/:id', categoryController.getSingleCategory_get)
 
 module.exports = router;
