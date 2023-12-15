@@ -144,10 +144,13 @@ module.exports.deleteAddress_patch =asynchandler(async(req, res)=>{
   try {
     const id = req.user._id;
     const {addressId} = req.params;
+    if(!id || !addressId){
+      return errorRes(res, 404, "Id id not Found.")
+    }
     const user = await User.findById(id)
     if(!user) return errorRes(res, 404, "User is not Found.")
     const addressIndex = user?.shippingAddress?.findIndex(
-      address => address._id.toString() === addressId
+      address => address._id === addressId
     );
     if (addressIndex === -1) {
       return errorRes(res, 400, "Address not found.");
