@@ -143,7 +143,8 @@ module.exports.updateUser = asynchandler(async (req, res) => {
 module.exports.deleteAddress_patch =asynchandler(async(req, res)=>{
   try {
     const id = req.user._id;
-    const {addressId} = req.params;
+    const {addressId} = req.body;
+    // console.log(id, addressId)
     if(!id || !addressId){
       return errorRes(res, 404, "Id id not Found.")
     }
