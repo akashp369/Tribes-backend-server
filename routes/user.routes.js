@@ -5,7 +5,7 @@ const {
 } = require("../middlewares/requireLogin");
 const userController = require("../controllers/user.controller");
 const router = express.Router();
-const upload=require("../middlewares/Multer")
+const upload = require("../middlewares/Multer");
 
 router.get("/admin/user/all", requireAdminLogin, userController.allusers_get);
 router.post(
@@ -24,15 +24,18 @@ router.post(
   requireUserLogin,
   userController.updateUserAddress_post
 );
-router.get(
-  "/user/getuser",
-  requireUserLogin,
-  userController.getUser
-);
+router.get("/user/getuser", requireUserLogin, userController.getUser);
 router.put(
   "/user/updateuser",
   requireUserLogin,
   upload.single("image"),
   userController.updateUser
 );
+
+router.post(
+  "/user/address/delete",
+  requireUserLogin,
+  userController.deleteAddress_patch
+);
+
 module.exports = router;

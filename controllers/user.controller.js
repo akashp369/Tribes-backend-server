@@ -138,3 +138,27 @@ module.exports.updateUser = asynchandler(async (req, res) => {
     errorRes(res, 404, "Cannot find the user");
   }
 })
+
+
+module.exports.deleteAddress_patch =asynchandler(async(req, res)=>{
+  try {
+    const id = req.user._id;
+    const {addressId} = req.params;
+    const user = await User.findById(id)
+    if(!user) return errorRes(res, 404, "User is not Found.")
+    const addressIndex = user?.shippingAddress?.findIndex(
+      address => address._id.toString() === addressId
+    );
+    if (addressIndex === -1) {
+      return errorRes(res, 400, "Address not found.");
+    }
+    user.shippingAddress.splice(addressIndex, 1);
+    const update = await user.save();
+    if(!update){
+      internalServerError(res, "Failed due to internal server error.")
+    }
+    successRes(res, update)
+  } catch (error) {
+    internalServerError(res, error.message)
+  }
+})

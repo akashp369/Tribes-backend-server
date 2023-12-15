@@ -21,7 +21,7 @@ const OrderSchema = mongoose.Schema(
         },
         priceVarient: {
           type: Object,
-          required: true
+          // required: true
         }
       },
     ],
