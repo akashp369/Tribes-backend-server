@@ -13,6 +13,7 @@ const {
 const crypto = require("crypto");
 const qs = require("querystring");
 const ccav = require("../utility/ccavutil");
+require('dotenv').config();
 
 module.exports.placeOrder_post = async (req, res) => {
   const { _id: userId } = req.user;
