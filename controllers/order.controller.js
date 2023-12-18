@@ -564,7 +564,7 @@ module.exports.ccavenueresponsehandler = async (request, response) => {
 
       response
         .writeHead(301, {
-          Location: "https://www.aalnakolkata.com/profile",
+          Location: "https://thetribe-web.vercel.app/profile",
         })
         .end();
     } else if (orderData.order_status === "Aborted") {
@@ -574,13 +574,13 @@ module.exports.ccavenueresponsehandler = async (request, response) => {
 
       response
         .writeHead(301, {
-          Location: "https://www.aalnakolkata.com/cart",
+          Location: "https://thetribe-web.vercel.app/cart",
         })
         .end();
     } else {
       response
         .writeHead(301, {
-          Location: `https://www.aalnakolkata.com`,
+          Location: `https://thetribe-web.vercel.app`,
         })
         .end();
     }
