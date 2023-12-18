@@ -440,7 +440,7 @@ module.exports.ccavenuerequesthandler = (request, response) => {
   var body = "",
     workingKey = process.env.CC_WORKING_KEY,
     accessCode = process.env.CC_ACCESS_CODE,
-    encRequest = "",
+    encRequest = "", 
     formbody = "";
 
   //Generate Md5 hash for the key and then convert in base64 string
