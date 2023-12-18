@@ -439,8 +439,8 @@ module.exports.ccavenue_creatOrder_post = async (req, res) => {
 
 module.exports.ccavenuerequesthandler = (request, response) => {
   var body = "",
-    workingKey = process.env.CC_WORKING_KEY,
-    accessCode = process.env.CC_ACCESS_CODE,
+    workingKey = "5843BAB2CA2A191D060233093430D41F",
+    accessCode = "AVXE03KH83CH04EXHC",
     encRequest = "", 
     formbody = "";
 
