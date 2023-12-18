@@ -483,7 +483,7 @@ module.exports.ccavenuerequesthandler = (request, response) => {
 module.exports.ccavenueresponsehandler = async (request, response) => {
   var ccavEncResponse = "",
     ccavResponse = "",
-    workingKey = process.env.CC_WORKING_KEY,
+    workingKey = "5843BAB2CA2A191D060233093430D41F",
     ccavPOST = "";
 
   //Generate Md5 hash for the key and then convert in base64 string
@@ -565,7 +565,7 @@ module.exports.ccavenueresponsehandler = async (request, response) => {
 
       response
         .writeHead(301, {
-          Location: "https://thetribe-web.vercel.app/profile",
+          Location: "https://www.thetribes.in/#/cart",
         })
         .end();
     } else if (orderData.order_status === "Aborted") {
@@ -575,13 +575,13 @@ module.exports.ccavenueresponsehandler = async (request, response) => {
 
       response
         .writeHead(301, {
-          Location: "https://thetribe-web.vercel.app/cart",
+          Location: "https://www.thetribes.in",
         })
         .end();
     } else {
       response
         .writeHead(301, {
-          Location: `https://thetribe-web.vercel.app`,
+          Location: `https://www.thetribes.in`,
         })
         .end();
     }
