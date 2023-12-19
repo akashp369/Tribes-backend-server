@@ -122,7 +122,7 @@ module.exports.getAllOrders_get = (req, res) => {
       {
         path: "products.product",
         select:
-          "_id displayName brand_title color price product_category displayImage availability productId",
+          "_id displayName brand_title color price product_category displayImage availability",
       },
       {
         path: "coupon_applied",
@@ -132,10 +132,10 @@ module.exports.getAllOrders_get = (req, res) => {
     .then((orders) => {
       const startIndex = (page - 1) * limit;
       const endIndex = page * limit;
-      const result = orders.slice(startIndex, endIndex);
+      const result = orders
       const finalResult = {
         result: result,
-        totalPage: Math.ceil(findData.length / limit)
+        totalPage: Math.ceil(orders.length / limit)
       }
       successRes(res, finalResult)
     })
