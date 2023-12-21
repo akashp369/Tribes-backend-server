@@ -47,7 +47,7 @@ module.exports.addProductCategory_post = async (req, res) => {
 
 module.exports.allCategory_get = (req, res) => {
   ProductCategory.find()
-    .sort({ createdAt: -1 })
+    .sort({ createdAt: 1 })
     .select("-__v")
     .then((categories) => {
       return successRes(res, { categories });
