@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const ProductCategory = mongoose.model("Product_Category");
 const { errorRes, internalServerError, successRes } = require("../utility");
-const { uploadOnCloudinary, deleteFromCloudinary } = require("../middlewares/Cloudinary");
+const {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} = require("../middlewares/Cloudinary");
 module.exports.addProductCategory_post = async (req, res) => {
   const imageurl1 = await uploadOnCloudinary(req.files.image[0]);
   const { name, description, subCategory } = req.body;
@@ -9,27 +12,33 @@ module.exports.addProductCategory_post = async (req, res) => {
     return errorRes(res, 400, "All fields are required.");
   else {
     ProductCategory.findOne({ name: { $regex: new RegExp(name, "i") } }).then(
-      savedCateg => {
+      (savedCateg) => {
         if (savedCateg)
           return errorRes(res, 400, "Category with given name already exist.");
         else {
-
           const category = new ProductCategory({
             name,
             description,
             displayImage: { url: imageurl1 },
-            subCategory: subCategory.split(',')
+            subCategory: subCategory.split(","),
           });
           category
             .save()
-            .then(savedCateg => {
-              const { name, description, displayImage, _id ,subCategory} = savedCateg;
+            .then((savedCateg) => {
+              const { name, description, displayImage, _id, subCategory } =
+                savedCateg;
               return successRes(res, {
-                product_category: { _id, name, description, displayImage,subCategory },
+                product_category: {
+                  _id,
+                  name,
+                  description,
+                  displayImage,
+                  subCategory,
+                },
                 message: "Category added successfully.",
               });
             })
-            .catch(err => internalServerError(res, err));
+            .catch((err) => internalServerError(res, err));
         }
       }
     );
@@ -38,12 +47,12 @@ module.exports.addProductCategory_post = async (req, res) => {
 
 module.exports.allCategory_get = (req, res) => {
   ProductCategory.find()
-    .sort("name")
+    .sort({ createdAt: -1 })
     .select("-__v")
-    .then(categories => {
+    .then((categories) => {
       return successRes(res, { categories });
     })
-    .catch(err => internalServerError(res, err));
+    .catch((err) => internalServerError(res, err));
 };
 
 module.exports.deleteProductCategory_delete = async (req, res) => {
@@ -53,9 +62,9 @@ module.exports.deleteProductCategory_delete = async (req, res) => {
   const product_C = await ProductCategory.findById({ _id: categoryId });
   if (!product_C) return errorRes(res, 400, "Category does not exist.");
 
-  await deleteFromCloudinary(product_C.displayImage.url)
+  await deleteFromCloudinary(product_C.displayImage.url);
   ProductCategory.findByIdAndDelete(categoryId)
-    .then(deletedCategory => {
+    .then((deletedCategory) => {
       if (!deletedCategory)
         return errorRes(res, 400, "Category does not exist.");
       else
@@ -64,7 +73,7 @@ module.exports.deleteProductCategory_delete = async (req, res) => {
           message: "Category deleted successfully.",
         });
     })
-    .catch(err => console.log(err));
+    .catch((err) => console.log(err));
 };
 module.exports.editCategory = async (req, res) => {
   const { categoryId } = req.params;
@@ -72,40 +81,43 @@ module.exports.editCategory = async (req, res) => {
   const product_C = await ProductCategory.findById({ _id: categoryId });
   if (!product_C) return errorRes(res, 400, "Category does not exist.");
   try {
-    const changes = {}
+    const changes = {};
     const { name, description, subCategory } = req.body;
     if (name) {
       changes.name = name;
     }
     if (description) {
-      changes.description = description
+      changes.description = description;
     }
     if (subCategory) {
-
-      changes.subCategory = subCategory.split(',');
+      changes.subCategory = subCategory.split(",");
     }
     if (req.files.image) {
       // deleteFromCloudinary(product_C.displayImage.url)
-      console.log(req.files)
+      console.log(req.files);
       const imageurl1 = await uploadOnCloudinary(req.files.image[0]);
       changes.displayImage = { url: imageurl1 };
     }
-    const updatedData = await ProductCategory.findByIdAndUpdate({ _id: categoryId }, changes, { new: true });
+    const updatedData = await ProductCategory.findByIdAndUpdate(
+      { _id: categoryId },
+      changes,
+      { new: true }
+    );
     successRes(res, updatedData);
   } catch (error) {
     internalServerError(res, "Error in editing product category");
   }
-}
+};
 
-module.exports.getSingleCategory_get = async(req, res)=>{
+module.exports.getSingleCategory_get = async (req, res) => {
   try {
-    const {id} = req.params;
-    const find = await ProductCategory.findById(id)
-    if(!find){
-      return errorRes(res, 404, "Category is Not Found.")
+    const { id } = req.params;
+    const find = await ProductCategory.findById(id);
+    if (!find) {
+      return errorRes(res, 404, "Category is Not Found.");
     }
-    successRes(res, find)
+    successRes(res, find);
   } catch (error) {
-    internalServerError(res, error.message)
+    internalServerError(res, error.message);
   }
-}
+};
