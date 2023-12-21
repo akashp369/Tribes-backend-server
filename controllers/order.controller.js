@@ -532,17 +532,17 @@ module.exports.ccavenueresponsehandler = async (request, response) => {
         .then(async (updatedOrder) => {
           console.log(updatedOrder, "<<<updated Order");
           // update products' availability
-          await Promise.all(
-            updatedOrder.products.map(async (item) => {
-              try {
-                const product = await Product.findById(item.product._id);
-                product.availability = product.availability - item.quantity;
-                await product.save();
-              } catch (err) {
-                internalServerError(res, err);
-              }
-            })
-          );
+          // await Promise.all(
+          //   updatedOrder.products.map(async (item) => {
+          //     try {
+          //       const product = await Product.findById(item.product._id);
+          //       product.availability = product.availability - item.quantity;
+          //       await product.save();
+          //     } catch (err) {
+          //       internalServerError(res, err);
+          //     }
+          //   })
+          // );
           // empty cart
           const cart = await User_Cart.findOne({ user: updatedOrder.buyer });
           cart.products = [];
