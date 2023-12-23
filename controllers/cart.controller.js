@@ -13,7 +13,7 @@ module.exports.getCartDetails_get = (req, res) => {
   User_Cart.findOne({ user: _id })
     .populate(
       "products.product",
-      "_id displayName brand_title color price product_category displayImage availability"
+      "_id displayName brand_title color price product_category displayImage availability priceVarient"
     )
     .then(cart => successRes(res, { cart }))
     .catch(err => internalServerError(res, err));
