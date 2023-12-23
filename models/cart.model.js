@@ -18,6 +18,9 @@ const CartSchema = mongoose.Schema(
         variant: {
           type: String,
           default: ""
+        },
+        varientPrice:{
+          type:Number
         }
       },
     ],

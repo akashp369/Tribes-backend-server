@@ -19,9 +19,12 @@ const OrderSchema = mongoose.Schema(
           type: Number,
           required: true,
         },
-        priceVarient: {
-          type: Object,
-          // required: true
+        variant: {
+          type: String,
+          default: ""
+        },
+        varientPrice:{
+          type:Number
         }
       },
     ],
