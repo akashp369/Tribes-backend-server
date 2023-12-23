@@ -22,6 +22,7 @@ module.exports.getCartDetails_get = (req, res) => {
 module.exports.editProductInCart_post = async (req, res) => {
   const { _id } = req.user;
   const { productId, type } = req.params;
+  const {variant}=req.body;
 
   if (!productId) return errorRes(res, 400, "Invalid product Id. or no price varient");
   if (type != "add" && type != "subtract" && type != "delete")
@@ -70,7 +71,7 @@ module.exports.editProductInCart_post = async (req, res) => {
       }
     } else {
       if (type === "add")
-        cart.products.push({ product: productId, quantity: 1});
+        cart.products.push({ product: productId, quantity: 1, variant});
       else return errorRes(res, 400, "Product does not exist in cart.");
     }
 

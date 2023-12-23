@@ -14,6 +14,10 @@ const CartSchema = mongoose.Schema(
           type: Number,
           required: true,
           default: 1,
+        },
+        variant: {
+          type: String,
+          default: ""
         }
       },
     ],
