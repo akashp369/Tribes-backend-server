@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const siteBannerSchema = new mongoose.Schema({
+const aboutBannerSchema = new mongoose.Schema({
   bannerImage: {
     url: {
       type: String,
@@ -16,4 +16,4 @@ const siteBannerSchema = new mongoose.Schema({
   }
 },{timestamps:true});
 
-mongoose.model("Site_Banner", siteBannerSchema);
+mongoose.model("about_Banner", aboutBannerSchema);
