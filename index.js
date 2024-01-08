@@ -25,7 +25,7 @@ const coupon_routes = require("./routes/coupon.routes");
 const faq_routes = require("./routes/FAQ.routes");
 const user_order_routes = require("./routes/order.routes");
 const site_banner_routes = require("./routes/site_banner.routes");
-// const about_banner_routes = require("./routes/about_banner.routes");
+const about_banner_routes = require("./routes/about_banner.routes");
 const site_trending_product_routes = require("./routes/site_trending_product.routes");
 const product_varient_routes=require('./routes/product_varient.routes');
 const tnc_routes=require("./routes/tnc.routes");
@@ -59,7 +59,7 @@ app.use(blog_routes);
 app.use(coupon_routes);
 app.use(faq_routes);
 app.use(site_banner_routes);
-// app.use(about_banner_routes);
+app.use(about_banner_routes);
 app.use(site_trending_product_routes);
 app.use(product_varient_routes)
 app.use(tnc_routes);

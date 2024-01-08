@@ -16,4 +16,5 @@ const aboutBannerSchema = new mongoose.Schema({
   }
 },{timestamps:true});
 
-mongoose.model("about_Banner", aboutBannerSchema);
+const aboutModle = mongoose.model("about_Banner", aboutBannerSchema);
+module.exports = aboutModle

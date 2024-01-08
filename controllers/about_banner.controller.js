@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const About_Banner = mongoose.model("about_Banner");
+const About_Banner = require('../models/about_banner.model')
 const { errorRes, internalServerError, successRes } = require("../utility");
 const { uploadOnCloudinary, deleteFromCloudinary } = require("../middlewares/Cloudinary");
 
