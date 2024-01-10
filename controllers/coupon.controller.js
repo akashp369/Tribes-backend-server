@@ -85,3 +85,13 @@ module.exports.getParticularCoupon_get = (req, res) => {
     })
     .catch(err => internalServerError(res, err));
 };
+
+module.exports.getSinbleById_get = (req, res)=>{
+  const {id}= req.params;
+  Coupon.findById(id)
+  .then(coupon => {
+    if (!coupon) return errorRes(res, 400, "Invalid coupon code.");
+    return successRes(res, { coupon });
+  })
+  .catch(err => internalServerError(res, err));
+}

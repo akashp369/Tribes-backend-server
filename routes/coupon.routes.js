@@ -20,5 +20,6 @@ router.post(
   couponController.editCoupons_post
 );
 router.get("/coupon/all", couponController.getAllCoupons_get);
+router.get('/coupon/single/:id', couponController.getSinbleById_get)
 
 module.exports = router;
