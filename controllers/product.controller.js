@@ -15,6 +15,8 @@ module.exports.addProduct_post = async (req, res) => {
     displayName,
     brand_title,
     description,
+    description1,
+    description2,
     color,
     // price,
     priceVarient,
@@ -82,6 +84,8 @@ module.exports.addProduct_post = async (req, res) => {
     displayName,
     brand_title,
     description,
+    description1,
+    description2,
     color,
     product_category,
     product_subCategory,
@@ -119,6 +123,8 @@ module.exports.editProduct_post = async (req, res) => {
     displayName,
     brand_title,
     description,
+    description1,
+    description2,
     color,
     // price,
     priceVarient,
@@ -181,6 +187,8 @@ module.exports.editProduct_post = async (req, res) => {
   if (displayName) updates.displayName = displayName;
   if (brand_title) updates.brand_title = brand_title;
   if (description) updates.description = description;
+  if (description1) updates.description1 = description1;
+  if (description2) updates.description2 = description2;
   if (color) updates.color = color;
   // if (price) updates.price = price;
   if (product_category) updates.product_category = product_category;

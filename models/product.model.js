@@ -15,6 +15,14 @@ const ProductSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    description1: {
+      type: String,
+      default:""
+    },
+    description2: {
+      type: String,
+      default:""
+    },
     color: {
       type: ObjectId,
       ref: "Product_Color",
