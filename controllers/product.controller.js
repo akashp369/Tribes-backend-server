@@ -407,3 +407,25 @@ module.exports.searchProduct = async (req, res) => {
 //   }
 
 // }
+
+
+module.exports.availabilityUpdate_put =async(req, res)=>{
+  try {
+    const { variantId } = req.params;
+    const { isAvailable } = req.body;
+    if(!variantId || !isAvailable){
+      return errorRes(res, 400, "Please provide variantId and isAvailable.")
+    }
+    const updatedProduct = await Product.findOneAndUpdate(
+      { 'priceVarient._id': variantId },
+      { $set: { 'priceVarient.$.isAvailable': isAvailable } },
+      { new: true }
+    );
+    if(!updatedProduct){
+      return internalServerError(res, "Internal Server Error.")
+    }
+    successRes(res, {updatedProduct}, "Product update Successfully.")
+  } catch (error) {
+    internalServerError(res, 'error in finding the product')
+  }
+}

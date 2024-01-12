@@ -53,6 +53,10 @@ const ProductSchema = mongoose.Schema(
       price: {
         type: String,
         required: true
+      },
+      isAvailable: {
+        type:Boolean,
+        default:true,
       }
     }],
     // product_varient:[{

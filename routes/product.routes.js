@@ -24,7 +24,8 @@ router.delete(
   productController.deleteProduct_delete
 );
 router.get("/product/search/paginated",productController.paginatedSearch);
-
+router.put('/product/update-availability/:variantId', 
+productController.availabilityUpdate_put)
 
 module.exports = router;
  
