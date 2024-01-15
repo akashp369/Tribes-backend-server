@@ -18,7 +18,7 @@ router.put(
   upload.fields([{ name: "image", maxCount: 6 }]), 
   productController.editProduct_post
 );
-router.get("/product/searchproduct",productController.searchProduct);
+
 router.delete(
   "/admin/product/:productId/delete",
   productController.deleteProduct_delete
@@ -26,6 +26,8 @@ router.delete(
 router.get("/product/search/paginated",productController.paginatedSearch);
 router.put('/product/update-availability/:variantId', 
 productController.availabilityUpdate_put)
+router.get("/product/searchproduct",productController.searchProduct);
+router.get('/product/search/query', productController.prodct_search_get)
 
 module.exports = router;
  

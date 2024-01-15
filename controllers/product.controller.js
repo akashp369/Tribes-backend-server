@@ -373,27 +373,29 @@ module.exports.paginatedSearch = asynchandler(async (req, res) => {
 
 
 })
-module.exports.searchProduct = async (req, res) => {
-  const { query } = req.query;
-  const queryObject = {};
-  if (query) {
+// module.exports.searchProduct = async (req, res) => {
+//   const { query } = req.query;
+//   const queryObject = {};
+//   console.log(query)
+//   if (query) {
 
-    queryObject.displayName = { $regex: query, $options: 'i' }
-    queryObject.product_subCategory = { $regex: query, $options: 'i' }
+//     queryObject.displayName = { $regex: "T", $options: 'i' }
+//     // queryObject.product_subCategory = { $regex: "T", $options: 'i' }
 
-  }
-  try {
-    const findProduct = await Product.find(queryObject);
-    if (findProduct) {
-      successRes(res, findProduct);
-    }
-    else {
-      errorRes(res, 400, "Cannot find the product");
-    }
-  } catch (error) {
-    internalServerError(res, "Error in searching product");
-  }
-}
+//   }
+//   successRes(res, {})
+//   // try {
+//   //   const findProduct = await Product.find(queryObject);
+//   //   if (findProduct) {
+//   //     successRes(res, findProduct);
+//   //   }
+//   //   else {
+//   //     errorRes(res, 400, "Cannot find the product");
+//   //   }
+//   // } catch (error) {
+//   //   internalServerError(res, "Error in searching product");
+//   // }
+// }
 // module.exports.searchCategory = async (req, res) => {
 //   const { category, subCategory } = req.body;
 //   try {
@@ -409,11 +411,11 @@ module.exports.searchProduct = async (req, res) => {
 // }
 
 
-module.exports.availabilityUpdate_put =async(req, res)=>{
+module.exports.availabilityUpdate_put = async (req, res) => {
   try {
     const { variantId } = req.params;
     const { isAvailable } = req.body;
-    if(!variantId || !isAvailable){
+    if (!variantId || !isAvailable) {
       return errorRes(res, 400, "Please provide variantId and isAvailable.")
     }
     const updatedProduct = await Product.findOneAndUpdate(
@@ -421,11 +423,54 @@ module.exports.availabilityUpdate_put =async(req, res)=>{
       { $set: { 'priceVarient.$.isAvailable': isAvailable } },
       { new: true }
     );
-    if(!updatedProduct){
+    if (!updatedProduct) {
       return internalServerError(res, "Internal Server Error.")
     }
-    successRes(res, {updatedProduct}, "Product update Successfully.")
+    successRes(res, { updatedProduct }, "Product update Successfully.")
   } catch (error) {
     internalServerError(res, 'error in finding the product')
+  }
+}
+
+
+module.exports.searchProduct = async (req, res) => {
+  const { query } = req.query;
+  const queryObject = {};
+  console.log(query)
+  if (query) {
+    queryObject.displayName = { $regex: query, $options: 'i' }
+    queryObject.product_subCategory = { $regex: query, $options: 'i' }
+  }
+  try {
+    const findProduct = await Product.find(queryObject);
+    if (findProduct) {
+      successRes(res, findProduct);
+    }
+    else {
+      errorRes(res, 400, "Cannot find the product");
+    }
+  } catch (error) {
+    internalServerError(res, "Error in searching product");
+  }
+}
+
+module.exports.prodct_search_get = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const queryObject = {};
+    // console.log(query)
+    if (query) {
+      queryObject.displayName = { $regex: query, $options: 'i' }
+      // queryObject.product_subCategory = { $regex: query, $options: 'i' }
+    }
+    const findProduct = await Product.find(queryObject);
+    if (findProduct) {
+      successRes(res, findProduct);
+    }
+    else {
+      errorRes(res, 400, "Cannot find the product");
+    }
+  } catch (error) {
+    internalServerError(res, "Error in searching product");
   }
 }

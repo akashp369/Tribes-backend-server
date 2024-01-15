@@ -40,7 +40,7 @@ database.on("error", err => console.log(err, "Error connecting db."));
 database.once("connected", () => console.log("Database Connected."));
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ extended: true }));
 
 app.get("/",(req,res)=>{
     res.status(200).json({message:"Tribes backend server is running"});
