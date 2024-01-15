@@ -463,7 +463,7 @@ module.exports.prodct_search_get = async (req, res) => {
       queryObject.displayName = { $regex: query, $options: 'i' }
       // queryObject.product_subCategory = { $regex: query, $options: 'i' }
     }
-    const findProduct = await Product.find(queryObject);
+    const findProduct = await Product.find(queryObject).limit(5);
     if (findProduct) {
       successRes(res, findProduct);
     }
