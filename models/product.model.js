@@ -57,7 +57,12 @@ const ProductSchema = mongoose.Schema(
       isAvailable: {
         type:Boolean,
         default:true,
-      }
+      },
+      availability: {
+        type: Number,
+        default: 0,
+        required: true,
+      },
     }],
     // product_varient:[{
     //   type:ObjectId,
@@ -73,11 +78,11 @@ const ProductSchema = mongoose.Schema(
         },
       },
     ],
-    availability: {
-      type: Number,
-      default: 0,
-      required: true,
-    },
+    // availability: {
+    //   type: Number,
+    //   default: 0,
+    //   required: true,
+    // },
     productId: {
       type: String,
       required: true,

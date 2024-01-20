@@ -24,7 +24,7 @@ module.exports.addProduct_post = async (req, res) => {
     product_subCategory,
     // product_varient,
     displayImage,
-    availability,
+    // availability,
 
 
   } = req.body;
@@ -36,8 +36,8 @@ module.exports.addProduct_post = async (req, res) => {
     !color ||
     !priceVarient ||
     !product_subCategory ||
-    !product_category ||
-    !availability
+    !product_category 
+    //  ||!availability
   )
     return errorRes(res, 400, "All fields are required.");
   if (!req.files) return errorRes(res, 400, " Product Image is required.");
@@ -92,7 +92,7 @@ module.exports.addProduct_post = async (req, res) => {
     priceVarient: parseData,
     price: parseData[0].price,
     displayImage: imageData,
-    availability,
+    // availability,
     productId,
   });
   await product
@@ -132,7 +132,7 @@ module.exports.editProduct_post = async (req, res) => {
     product_subCategory,
     // product_varient,
     displayImage,
-    availability,
+    // availability,
   } = req.body;
 
   const updates = {};
@@ -203,7 +203,7 @@ module.exports.editProduct_post = async (req, res) => {
   if (req.files.image.length > 0) {
     if (imageData.length !== 0) updates.displayImage = imageData;
   }
-  if (availability) updates.availability = availability;
+  // if (availability) updates.availability = availability;
 
   // return null;
   if (Object.keys(updates).length == 0)
