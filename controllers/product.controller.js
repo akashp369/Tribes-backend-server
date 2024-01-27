@@ -474,3 +474,39 @@ module.exports.prodct_search_get = async (req, res) => {
     internalServerError(res, "Error in searching product");
   }
 }
+
+module.exports.updateFeatured = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { isFeatured } = req.body;
+    
+    if (!productId || !isFeatured) {
+      return errorRes(res, 400, "All details mandatory.");
+    }
+
+    const find = await Product.findByIdAndUpdate(productId, { isFeatured }, { new: true });
+
+    if (!find) {
+      return errorRes(res, 500, "Update Product Failed.");
+    }
+
+    successRes(res, find, "Update Product is Done.");
+  } catch (error) {
+    internalServerError(res, "Internal server error.");
+  }
+};
+
+
+module.exports.getFeaturedProducts = async (req, res) => {
+  try {
+    // Use $match to filter only featured products and $sample to get random products
+    const featuredProducts = await Product.aggregate([
+      { $match: { isFeatured: true } },
+      { $sample: { size: 8 } }
+    ]);
+
+    successRes(res, { products:featuredProducts }, 'Featured products retrieved successfully.');
+  } catch (error) {
+    internalServerError(res, 'Internal server error.');
+  }
+};

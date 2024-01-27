@@ -28,6 +28,8 @@ router.put('/product/update-availability/:variantId',
 productController.availabilityUpdate_put)
 router.get("/product/searchproduct",productController.searchProduct);
 router.get('/product/search/query', productController.prodct_search_get)
+router.put('/product/update/featured/:productId', productController.updateFeatured)
+router.get('/product/get/featured', productController.getFeaturedProducts)
 
 module.exports = router;
  
