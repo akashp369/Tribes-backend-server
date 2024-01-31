@@ -4,13 +4,23 @@ const User = mongoose.model("User");
 const User_Cart = mongoose.model("User_Cart");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const nodemailer = require('nodemailer');
 const {
   errorRes,
   internalServerError,
   successRes,
 } = require("../utility/index");
+require("dotenv").config();
 const JWT_SECRET_ADMIN = process.env.JWT_SECRET_ADMIN;
 const JWT_SECRET_USER = process.env.JWT_SECRET_USER;
+
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.APP_EMAIL,
+    pass: process.env.APP_PASS,
+  }
+});
 
 module.exports.adminSignup_post = async (req, res) => {
   const { displayName, email, password } = req.body;
@@ -97,7 +107,7 @@ module.exports.userSignup_post = async (req, res) => {
     return errorRes(res, 400, "All fields are required.");
 
   try {
-    const savedAdmin = await Admin.findOne({ email });
+    const savedAdmin = await User.findOne({ email });
     if (savedAdmin)
       return errorRes(res, 400, "Use different email for user account.");
   } catch (err) {
@@ -226,3 +236,71 @@ module.exports.userSignin_post = async (req, res) => {
     })
     .catch((err) => internalServerError(res, err));
 };
+
+
+
+module.exports.forgot = async (req, res) => {
+  let { email } = req.body;
+  if (!email)
+    return errorRes(res, 400, "All fields are required.");
+  try {
+    const normalizedEmail = email.toLowerCase();
+    const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const user = await User.findOne({email:emailRegExp});
+    if(!user){
+      return errorRes(res, 404, "User not Found.");
+    }
+    user.passwordResetOTP = otp;
+    user.passwordResetOTPExpires = Date.now() + 600000;
+    await user.save();
+    var mailOptions = {
+      from: process.env.APP_EMAIL,
+      to: user?.email,
+      subject: 'Otp for Reset Password',
+      text: `Your OTP for password reset is: ${otp}`
+    };
+    await transporter.sendMail(mailOptions);
+    return successRes(res, {
+      message: 'OTP sent to your email address.',
+    });
+  } catch (error) {
+    return internalServerError(res, error);
+  }
+};
+
+module.exports.verifyOTP = async (req, res) => {
+  const { email, otp, password } = req.body;
+
+  if (!email || !otp || !password) {
+    return errorRes(res, 400, 'All fields are required.');
+  }
+
+  try {
+    const normalizedEmail = email.toLowerCase();
+    const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
+    const user = await User.findOne({ email:emailRegExp });
+    if (!user) {
+      return errorRes(res, 404, 'User not found.');
+    }
+    if (user.passwordResetOTPExpires && Date.now() > user.passwordResetOTPExpires) {
+      return errorRes(res, 400, 'OTP has expired. Please request a new OTP.');
+    }
+    if (otp != user.passwordResetOTP) {
+      return errorRes(res, 400, 'Invalid OTP. Please enter the correct OTP.');
+    }
+    const hashedPassword = await bcrypt.hash(password, 7);
+    user.password = hashedPassword;
+    user.passwordResetOTP = null;
+    user.passwordResetOTPExpires = null;
+
+    await user.save();
+
+    return successRes(res, {
+      message: 'Password Update successful.',
+    });
+  } catch (err) {
+    return internalServerError(res, err);
+  }
+};
+

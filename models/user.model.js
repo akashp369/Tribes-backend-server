@@ -60,6 +60,14 @@ const UserSchema = mongoose.Schema(
       type: String,
       default: "user",
     },
+    passwordResetOTP: {
+      type: String, 
+      default: null, 
+    },
+    passwordResetOTPExpires: {
+      type: Date,
+      default: null,
+    },
     coupon_applied: [],
   },
   { timestamps: true }
