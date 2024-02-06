@@ -23,11 +23,11 @@ module.exports.editProductInCart_post = async (req, res) => {
   const { _id } = req.user;
   const { productId, type } = req.params;
   const { variant, varientPrice } = req.body;
-  if (type != "add" && type != "subtract" && type != "delete")
+  if (type != "add" && type != "subtract" && type != "delete" && type != "modify")
     return errorRes(
       res,
       400,
-      "Request type can be - 'add', 'subtract' or 'delete'."
+      "Request type can be - 'add', 'subtract', modify or 'delete'."
     );
   try {
     const cart = await User_Cart.findOne({ user: _id });
@@ -54,18 +54,18 @@ module.exports.editProductInCart_post = async (req, res) => {
       );
 
       if (productIndex > -1) {
+        const productVariant = findProduct.priceVarient.find(
+          (v) => v.varient === variant
+        );
+        if (!productVariant || !productVariant.isAvailable) {
+          return errorRes(
+            res,
+            400,
+            `Product variant "${variant}" is not available.`
+          );
+        }
         if (type === "add") {
           // basis on the findProduct productvartant avalibility quantity ko update karna hai 
-          const productVariant = findProduct.priceVarient.find(
-            (v) => v.varient === variant
-          );
-          if (!productVariant || !productVariant.isAvailable) {
-            return errorRes(
-              res,
-              400,
-              `Product variant "${variant}" is not available.`
-            );
-          }
           if (productVariant.availability >= cart.products[productIndex].quantity + 1) {
             cart.products[productIndex].quantity++;
           } else {
@@ -79,7 +79,22 @@ module.exports.editProductInCart_post = async (req, res) => {
           if (cart.products[productIndex].quantity >= 2)
             cart.products[productIndex].quantity--;
           else cart.products.splice(productIndex, 1);
-        } else {
+        }else if(type==="modify"){
+          const {quantity} = req.body;
+          if(quantity>0){
+            if (productVariant.availability >= quantity) {
+              cart.products[productIndex].quantity=quantity;
+            } else {
+              return errorRes(
+                res,
+                400,
+                `Quantity for "${findProduct.displayName}" cannot be more than ${productVariant.availability}`
+              );
+            }
+          }
+        } 
+        
+        else {
           cart.products.splice(productIndex, 1);
         }
       } else {
