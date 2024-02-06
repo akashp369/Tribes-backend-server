@@ -365,6 +365,7 @@ module.exports.ccavenue_creatOrder_post = async (req, res) => {
   const { _id: userId } = req.user;
   const { products, order_price, coupon_applied, shippingAddress } = req.body;
   // make cart empty
+  // console.log(products, order_price, coupon_applied, shippingAddress )
 
   if (!products || !order_price || !shippingAddress)
     return errorRes(res, 400, "All fields are required.");
@@ -375,25 +376,43 @@ module.exports.ccavenue_creatOrder_post = async (req, res) => {
       products.map((item) => {
         if (!item.quantity >= 1)
           return errorRes(res, 400, "Remove products from with zero quantity.");
-        Product.findById(item.product).then((prod) => {
+        Product.findById(item?.product?._id).then((prod) => {
+          console.log(prod)
           if (!prod)
             return errorRes(
               res,
               400,
               `Internal server error. Please refresh cart.`
             );
-          if (!prod.availability >= 1)
-            return errorRes(
-              res,
-              400,
-              "Remove out of stock products from cart."
+            const selectedVariant = prod.priceVarient.find(
+              (variant) => variant.varient == item.variant
             );
-          if (!prod.availability >= item.quantity)
-            return errorRes(
-              res,
-              400,
-              `Cannot place order for product ${prod.displayName} with quantity more than ${prod.availability}`
-            );
+        
+            if (!selectedVariant || !selectedVariant.isAvailable)
+              return errorRes(
+                res,
+                400,
+                `Selected variant ${item.variant} is not available.`
+              );
+        
+            if (selectedVariant.availability < item.quantity)
+              return errorRes(
+                res,
+                400,
+                `Cannot place an order for product ${prod.displayName} with a quantity more than ${selectedVariant.availability}.`
+              );
+          // if (!prod.availability >= 1)
+          //   return errorRes(
+          //     res,
+          //     400,
+          //     "Remove out of stock products from cart."
+          //   );
+          // if (!prod.availability >= item.quantity)
+          //   return errorRes(
+          //     res,
+          //     400,
+          //     `Cannot place order for product ${prod.displayName} with quantity more than ${prod.availability}`
+          //   );
         });
       })
     );
@@ -532,17 +551,26 @@ module.exports.ccavenueresponsehandler = async (request, response) => {
         .then(async (updatedOrder) => {
           console.log(updatedOrder, "<<<updated Order");
           // update products' availability
-          // await Promise.all(
-          //   updatedOrder.products.map(async (item) => {
-          //     try {
-          //       const product = await Product.findById(item.product._id);
-          //       product.availability = product.availability - item.quantity;
-          //       await product.save();
-          //     } catch (err) {
-          //       internalServerError(res, err);
-          //     }
-          //   })
-          // );
+          await Promise.all(
+            updatedOrder.products.map(async (item) => {
+              try {
+                const product = await Product.findById(item.product);
+                if (!product) {
+                  console.log(`Product with ID ${item.product._id} not found.`);
+                  return;
+                }
+                const variant = product.priceVarient.find(v => v.varient === item.variant);
+                if (!variant) {
+                  console.log(`Variant ${item.variant} not found for product ${product.displayName}.`);
+                  return;
+                }
+                variant.availability -= item.quantity;
+                await product.save();
+              } catch (err) {
+                // internalServerError(res, err);
+              }
+            })
+          );
           // empty cart
           const cart = await User_Cart.findOne({ user: updatedOrder.buyer });
           cart.products = [];
