@@ -29,7 +29,9 @@ module.exports.adminSignup_post = async (req, res) => {
     return errorRes(res, 400, "All fields are required.");
 
   try {
-    const savedUser = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase();
+    const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
+    const savedUser = await Admin.findOne({ email: emailRegExp });
     if (savedUser)
       return errorRes(res, 400, "Use different email for admin account.");
   } catch (err) {
@@ -80,7 +82,9 @@ module.exports.adminSignin_post = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
     return errorRes(res, 400, "All fields are required.");
-  Admin.findOne({ email })
+  const normalizedEmail = email.toLowerCase();
+  const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
+  Admin.findOne({ email: emailRegExp })
     .then((savedAdmin) => {
       if (!savedAdmin) return errorRes(res, 400, "Invalid login credentials.");
       bcrypt
@@ -100,6 +104,27 @@ module.exports.adminSignin_post = async (req, res) => {
     .catch((err) => internalServerError(res, err));
 };
 
+module.exports.updatePassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return errorRes(res, 400, "Email and Password is required.")
+    }
+    const normalizedEmail = email.toLowerCase();
+    const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
+    const adminfind = await Admin.findOne({ email: emailRegExp })
+    if (!adminfind) {
+      return errorRes(res, 404, "Admin not found.")
+    }
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    adminfind.password = hashedPassword;
+    return successRes(res, { message: "Password updated successfully." });
+  } catch (error) {
+    internalServerError(res, "Internal server error")
+  }
+}
+
 module.exports.userSignup_post = async (req, res) => {
   const { displayName, email, password, phoneNumber } = req.body;
 
@@ -107,7 +132,9 @@ module.exports.userSignup_post = async (req, res) => {
     return errorRes(res, 400, "All fields are required.");
 
   try {
-    const savedAdmin = await User.findOne({ email });
+    const normalizedEmail = email.toLowerCase();
+    const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
+    const savedAdmin = await User.findOne({ email: emailRegExp });
     if (savedAdmin)
       return errorRes(res, 400, "Use different email for user account.");
   } catch (err) {
@@ -188,8 +215,10 @@ module.exports.userSignin_post = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password)
     return errorRes(res, 400, "All fields are required.");
+  const normalizedEmail = email.toLowerCase();
+  const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
   User.findOne({
-    email,
+    email: emailRegExp,
   })
     .then((savedUser) => {
       if (!savedUser) return errorRes(res, 400, "Invalid login credentials.");
@@ -247,8 +276,8 @@ module.exports.forgot = async (req, res) => {
     const normalizedEmail = email.toLowerCase();
     const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const user = await User.findOne({email:emailRegExp});
-    if(!user){
+    const user = await User.findOne({ email: emailRegExp });
+    if (!user) {
       return errorRes(res, 404, "User not Found.");
     }
     user.passwordResetOTP = otp;
@@ -279,7 +308,7 @@ module.exports.verifyOTP = async (req, res) => {
   try {
     const normalizedEmail = email.toLowerCase();
     const emailRegExp = new RegExp(`^${normalizedEmail}$`, 'i');
-    const user = await User.findOne({ email:emailRegExp });
+    const user = await User.findOne({ email: emailRegExp });
     if (!user) {
       return errorRes(res, 404, 'User not found.');
     }
