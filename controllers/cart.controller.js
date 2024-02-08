@@ -19,6 +19,18 @@ module.exports.getCartDetails_get = (req, res) => {
     .catch((err) => internalServerError(res, err));
 };
 
+module.exports.updateCard = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const cart = await User_Cart.findOne({ user: _id });
+    cart.products = [];
+    await cart.save();
+    successRes(res, { message: "Cart Update Done." });
+  } catch (error) {
+    internalServerError(res, error.message)
+  }
+}
+
 module.exports.editProductInCart_post = async (req, res) => {
   const { _id } = req.user;
   const { productId, type } = req.params;
@@ -79,11 +91,11 @@ module.exports.editProductInCart_post = async (req, res) => {
           if (cart.products[productIndex].quantity >= 2)
             cart.products[productIndex].quantity--;
           else cart.products.splice(productIndex, 1);
-        }else if(type==="modify"){
-          const {quantity} = req.body;
-          if(quantity>0){
+        } else if (type === "modify") {
+          const { quantity } = req.body;
+          if (quantity > 0) {
             if (productVariant.availability >= quantity) {
-              cart.products[productIndex].quantity=quantity;
+              cart.products[productIndex].quantity = quantity;
             } else {
               return errorRes(
                 res,
@@ -92,8 +104,8 @@ module.exports.editProductInCart_post = async (req, res) => {
               );
             }
           }
-        } 
-        
+        }
+
         else {
           cart.products.splice(productIndex, 1);
         }

@@ -363,11 +363,11 @@ module.exports.rzpPaymentVerification = async (req, res) => {
 // ccavenue controllers
 module.exports.ccavenue_creatOrder_post = async (req, res) => {
   const { _id: userId } = req.user;
-  const { products, order_price, coupon_applied, shippingAddress } = req.body;
+  const { products, order_price, coupon_applied, shippingAddress, payment_mode } = req.body;
   // make cart empty
   // console.log(products, order_price, coupon_applied, shippingAddress )
 
-  if (!products || !order_price || !shippingAddress)
+  if (!products || !order_price || !shippingAddress || !payment_mode)
     return errorRes(res, 400, "All fields are required.");
   if (products.length == 0) return errorRes(res, 400, "Cart is empty.");
 
@@ -423,7 +423,7 @@ module.exports.ccavenue_creatOrder_post = async (req, res) => {
       order_price,
       coupon_applied,
       shippingAddress,
-      payment_mode: "ONLINE",
+      payment_mode: payment_mode,
       payment_status: "PENDING",
     });
 

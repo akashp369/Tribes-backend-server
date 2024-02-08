@@ -14,6 +14,8 @@ router.post(
   '/user/wishlist/:productId/:type',
   requireUserLogin,
   cart_controller.addtoWishlist
-  )
+)
+
+router.post("/updatecart", requireUserLogin, cart_controller.updateCard)
 
 module.exports = router;
