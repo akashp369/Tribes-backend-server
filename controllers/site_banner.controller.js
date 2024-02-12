@@ -8,9 +8,9 @@ module.exports.addBanner_post = async (req, res) => {
   const { banners, content, title } = req.body;
   const result = [];
   if (!req?.files) return errorRes(res, 400, " Banner Image is required.");
-  if (!req?.files?.image)
+  if (!req?.files?.image || !req?.files?.image2)
     return errorRes(res, 400, " Banner Image is required.");
-  if (req?.files?.image?.length == 0)
+  if (req?.files?.image?.length == 0 || req?.files?.image2?.length == 0)
     return errorRes(res, 400, " Banner Image is required.");
   if (!title || !content)
     return errorRes(res, 400, "Title and Content is Required..");
@@ -19,9 +19,11 @@ module.exports.addBanner_post = async (req, res) => {
     // if (req?.files?.image?.length > 0) {
     // req?.files?.image?.map(async (item, index) => {
     const imageurl1 = await uploadOnCloudinary(req?.files.image[0]);
+    const imageurl2 = await uploadOnCloudinary(req?.files.image2[0]);
 
     const banner = await new Site_Banner({
       bannerImage: { url: imageurl1 },
+      phoneBannerImage: { url: imageurl2 },
       title, content,
     });
     await banner.save();

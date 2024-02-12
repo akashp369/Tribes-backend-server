@@ -7,8 +7,7 @@ const router = express.Router();
 router.post(
   "/admin/banner/add",
   //  requireAdminLogin,
-  upload.fields([{ name: "image", maxCount: 5 }]),
-
+  upload.fields([{ name: "image", maxCount: 2 }, {name:"image2", maxCount:2}]),
   bannerController.addBanner_post 
 );
 router.get("/banner/all", bannerController.getAllBanners_get);

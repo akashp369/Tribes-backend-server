@@ -8,6 +8,13 @@ const aboutBannerSchema = new mongoose.Schema({
         "https://res.cloudinary.com/piyush27/image/upload/v1677079091/WhatsApp_Image_2023-02-22_at_8.47.17_PM_agawba.jpg",
     },
   },
+  phoneBannerImage: {
+    url: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/piyush27/image/upload/v1677079091/WhatsApp_Image_2023-02-22_at_8.47.17_PM_agawba.jpg",
+    },
+  },
   title:{
     type:String,
   },
