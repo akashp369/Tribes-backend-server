@@ -427,30 +427,62 @@ module.exports.ccavenue_creatOrder_post = async (req, res) => {
       payment_status: "PENDING",
     });
 
-    await order
-      .save()
-      .then((savedOrder) => {
-        savedOrder
-          .populate([
-            { path: "buyer", select: "_id displayName email" },
-            {
-              path: "products.product",
-              select:
-                "_id displayName brand_title color price product_category displayImage availability",
-            },
-            {
-              path: "coupon_applied",
-              select: "_id code condition min_price discount_percent is_active",
-            },
-          ])
-          .then((result) =>
-            successRes(res, {
-              order: result,
-              message: "Order placed successfully.",
-            })
-          );
-      })
-      .catch((err) => internalServerError(res, err));
+    await order.save();
+
+    if (payment_mode == "COD") {
+      await Promise.all(
+        products.map(async (item) => {
+          const product = await Product.findById(item.product);
+          if (!product) {
+            console.log(`Product with ID ${item.product._id} not found.`);
+            return;
+          }
+          const variant = product.priceVarient.find(v => v.varient === item.variant);
+          if (!variant) {
+            console.log(`Variant ${item.variant} not found for product ${product.displayName}.`);
+            return;
+          }
+          variant.availability -= item.quantity;
+          await product.save();
+        })
+      );
+    }
+    await order.populate([
+      { path: "buyer", select: "_id displayName email" },
+      {
+        path: "products.product",
+        select: "_id displayName brand_title color price product_category displayImage availability",
+      },
+      {
+        path: "coupon_applied",
+        select: "_id code condition min_price discount_percent is_active",
+      },
+    ]);
+    // await order
+    //   .save()
+    //   .then((savedOrder) => {
+    //     savedOrder
+    //       .populate([
+    //         { path: "buyer", select: "_id displayName email" },
+    //         {
+    //           path: "products.product",
+    //           select:
+    //             "_id displayName brand_title color price product_category displayImage availability",
+    //         },
+    //         {
+    //           path: "coupon_applied",
+    //           select: "_id code condition min_price discount_percent is_active",
+    //         },
+    //       ])
+    //       .then((result) =>
+    //         successRes(res, {
+    //           order: result,
+    //           message: "Order placed successfully.",
+    //         })
+    //       );
+    //   })
+    //   .catch((err) => internalServerError(res, err));
+    successRes(res, { order, message: "Order placed successfully." });
   } catch (error) {
     internalServerError(res, error);
   }
