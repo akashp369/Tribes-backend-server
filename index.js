@@ -48,6 +48,7 @@ app.get("/",(req,res)=>{
 app.listen(PORT, () => console.log(`Listening on PORT:`, PORT));
 app.use(cors({ origin: "*" }));
 
+
 app.use(auth_routes);
 app.use(product_category_routes);
 app.use(product_color_routes);
